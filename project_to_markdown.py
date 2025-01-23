@@ -243,7 +243,7 @@ class ProjectAnalyzer:
     
     def generate_summary(self, skipped_file_limit: int = 10) -> str:
         """
-        Generate analysis summary including statistics and skipped files.
+        Generate transformation summary including statistics and skipped files.
         
         Args:
             skipped_file_limit: Maximum number of skipped files to list
@@ -252,7 +252,7 @@ class ProjectAnalyzer:
             str: Formatted summary
         """
         summary = [
-            "Project Analysis Summary",
+            "Project transformation Summary",
             "=====================",
             f"Root Directory: {self.root_path}",
             f"Files Analyzed: {self.files_analyzed}",
@@ -339,7 +339,7 @@ class ProjectAnalyzer:
         
         # Generate default filename based on project name and timestamp
         root_name = os.path.basename(self.root_path.rstrip(os.sep))
-        filename = f"project_analysis_{root_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+        filename = f"project_transformation_{root_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         
         # Save in current working directory's ref folder
         if not output_path:
@@ -420,13 +420,13 @@ def main():
         )
         
         output_files = analyzer.save_report(args.output)
-        print(f"\nAnalysis completed successfully!")
+        print(f"\ntransformation completed successfully!")
         print("Reports saved to:")
         for path in output_files:
             print(f"- {path}")
         
     except Exception as e:
-        print(f"Error during analysis: {str(e)}", file=sys.stderr)
+        print(f"Error during transformation: {str(e)}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == '__main__':

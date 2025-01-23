@@ -12,30 +12,30 @@ Generate consolidated documentation of your local projects for Large Language Mo
 
 ## Installation
 
-Just download `project_analyzer.py` and ensure Python is installed on your system.
+Just download `project_to_markdown.py` and ensure Python is installed on your system.
 
 ## Usage
 
 Basic syntax:
 ```bash
-python project_analyzer.py "path/to/your/project" [options]
+python project_to_markdown.py "path/to/your/project" [options]
 ```
 
 Example:
 ```bash
-python project_analyzer.py "C:\Users\username\Projects\my-project" --exclude-dirs ref logs
+python project_to_markdown.py "C:\Users\username\Projects\my-project" --exclude-dirs ref logs
 ```
 
 ## Options
 
 # Uso básico
 ```bash
-python project_analyzer.py /path/to/project
+python project_to_markdown.py /path/to/project
 ```
 
 # Con opciones
 ```bash
-python project_analyzer.py /path/to/project \
+python project_to_markdown.py /path/to/project \
     --output report.md \
     --max-depth 3 \
     --exclude-dirs tests docs \
@@ -69,17 +69,17 @@ The script generates a markdown file named `script_docs_for_project_[projectname
 
 ### Windows
 ```bash
-python project_analyzer.py "C:\Users\username\my-project" --exclude-dirs temp cache
+python project_to_markdown.py "C:\Users\username\my-project" --exclude-dirs temp cache
 ```
 
 ### Linux/Mac
 ```bash
-python project_analyzer.py "/home/username/my-project" --exclude-dirs temp cache
+python project_to_markdown.py "/home/username/my-project" --exclude-dirs temp cache
 ```
 
 ### Current use case:
 ```bash
-python project_analyzer.py "C:\Users\ronal\APPs\telco_analytics" --exclude-dirs ref logs
+python project_to_markdown.py "C:\Users\ronal\APPs\telco_analytics" --exclude-dirs ref logs
 ```
 
 ## Notes
