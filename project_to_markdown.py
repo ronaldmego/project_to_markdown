@@ -37,7 +37,7 @@ CODE_FILE_EXTENSIONS = {
     '.md', '.rst', '.tex','.txt',
     # Other languages
     '.scala', '.kt', '.kts', '.swift', '.m', '.mm', '.r', '.pl', '.pm',
-    '.groovy', '.gradle', '.clj', '.cls', '.ex', '.exs'
+    '.groovy', '.gradle', '.clj', '.cls', '.ex', '.exs','.lock'
 }
 
 # Files without extensions that are typically code
@@ -48,15 +48,14 @@ NO_EXT_CODE_FILES = {
 }
 
 class ProjectAnalyzer:
-    def __init__(
-        self, 
-        root_path: str,
-        exclude_dirs: Optional[Set[str]] = None,
-        exclude_files: Optional[Set[str]] = None,
-        max_file_size: int = 1024 * 1024,  # 1MB default
-        max_files: int = 1000,
-        max_depth: Optional[int] = None
-    ):
+    def __init__(self, 
+                 root_path: str,
+                 exclude_dirs: Optional[Set[str]] = None,
+                 exclude_files: Optional[Set[str]] = None,
+                 max_file_size: int = 1024 * 1024,
+                 max_files: int = 1000,
+                 max_depth: Optional[int] = None,
+                 max_lines: int = 500):  # Añadir parámetro
         """
         Initialize the project analyzer with the given configuration.
 
@@ -74,6 +73,7 @@ class ProjectAnalyzer:
         self.max_file_size = max_file_size
         self.max_files = max_files
         self.max_depth = max_depth
+        self.max_lines = max_lines
         
         # Statistics
         self.files_analyzed = 0
@@ -107,6 +107,15 @@ class ProjectAnalyzer:
             '.html': self._handle_html,
             '.css': self._handle_css
         }
+
+    def process_content(self, content: str, filepath: str) -> str:
+        """Procesa y trunca el contenido si es necesario."""
+        lines = content.split('\n')
+        if len(lines) > self.max_lines:
+            truncated = lines[:self.max_lines]
+            truncated.append(f"\n... [Contenido truncado por exceder {self.max_lines} líneas] ...")
+            return '\n'.join(truncated)
+        return content
 
     def _handle_python(self, content):
         """Special handling for Python files."""
@@ -280,14 +289,9 @@ class ProjectAnalyzer:
         return "\n".join(lines)
     
     def collect_code_files(self) -> List[Tuple[str, str]]:
-        """
-        Collect all code files with their content.
-        
-        Returns:
-            List[Tuple[str, str]]: List of (relative_path, content) pairs
-        """
+        """Collect all code files with their content."""
         code_files = []
-        self.files_analyzed = 0  # Reset counter
+        self.files_analyzed = 0
         
         def process_directory(path: str, current_depth: int = 0) -> None:
             if self.max_depth is not None and current_depth > self.max_depth:
@@ -322,6 +326,7 @@ class ProjectAnalyzer:
                                 try:
                                     with open(full_path, 'r', encoding='utf-8') as f:
                                         content = f.read()
+                                        content = self.process_content(content, full_path)  # Aplicar truncamiento
                                         print(f"Debug: Content length for {item}: {len(content)} chars")
                                         if len(content.strip()) == 0:
                                             print(f"Warning: Empty content for {item}")
@@ -492,6 +497,12 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter
     )
     
+
+    parser.add_argument('--max-lines',
+                       type=int,
+                       default=500,
+                       help='Maximum number of lines per file (default: 500)')
+
     parser.add_argument('directory', 
                        type=str, 
                        help='Root directory path to analyze')
@@ -535,7 +546,8 @@ def main():
             exclude_files=set(args.exclude_files) if args.exclude_files else None,
             max_file_size=args.max_file_size,
             max_files=args.max_files,
-            max_depth=args.max_depth
+            max_depth=args.max_depth,
+            max_lines=args.max_lines  # Añadir el nuevo parámetro
         )
         
         output_files = analyzer.save_report(args.output)
