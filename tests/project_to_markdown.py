@@ -34,7 +34,7 @@ CODE_FILE_EXTENSIONS = {
     # Data and config
     '.json', '.yaml', '.yml', '.toml', '.ini', '.conf', '.env',
     # Documentation
-    '.md', '.rst', '.tex','.txt',
+    '.md', '.rst', '.tex','.txt','.qmd',
     # Other languages
     '.scala', '.kt', '.kts', '.swift', '.m', '.mm', '.r', '.pl', '.pm',
     '.groovy', '.gradle', '.clj', '.cls', '.ex', '.exs','.lock'

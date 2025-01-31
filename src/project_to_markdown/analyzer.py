@@ -10,7 +10,12 @@ from project_to_markdown.constants import (
     DEFAULT_EXCLUDE_DIRS,
     MIN_LINES_PER_FILE,
     MAX_FILES,
-    MAX_TOTAL_SIZE_BYTES
+    MAX_TOTAL_SIZE_BYTES,
+    KNOWN_TEXT_EXTENSIONS,
+    IMPORTANT_CONFIG_FILES,
+    DEFAULT_EXCLUDE_FILES,
+    OUTPUT_DIR,
+    SENSITIVE_FILES
 )
 
 class ProjectAnalyzer:
@@ -58,34 +63,92 @@ class ProjectAnalyzer:
         return content
 
     def is_text_file(self, file_path: str) -> bool:
-        """Determine if a file is a text file by examining its content."""
+        """
+        Determine if a file is a text file by examining its content.
+        Now more permissive with common text files.
+        """
+        # Check if file has no extension but is a known text file
+        filename = os.path.basename(file_path.lower())
+        if filename == '.gitignore':  # Special case for .gitignore
+            return True
+            
+        # Si la extensión es conocida, asumimos que es texto
+        _, ext = os.path.splitext(file_path.lower())
+        if ext in KNOWN_TEXT_EXTENSIONS:
+            return True
+                
+        # Para otras extensiones, hacemos la verificación de contenido
         try:
             with open(file_path, 'rb') as file:
                 chunk = file.read(1024)
-                return all(c < 128 for c in chunk)
+                # Permitimos más caracteres comunes en archivos de texto
+                return all(c < 128 for c in chunk)  # Más permisivo con ASCII
         except (OSError, PermissionError):
             return False
+
+    def is_sensitive_file(self, filepath: str) -> bool:
+        """
+        Check if a file might contain sensitive information.
+        
+        Args:
+            filepath: Path to the file to check
+            
+        Returns:
+            bool: True if the file might contain sensitive data
+        """
+        filename = os.path.basename(filepath)
+        
+        # Verificar contra la lista de archivos sensibles
+        if filename in SENSITIVE_FILES:
+            return True
+        
+        # Verificar nombres comunes de archivos de configuración que podrían tener secretos
+        lower_filename = filename.lower()
+        sensitive_patterns = {
+            'secret', 'password', 'credential', 'token', 'key', 
+            'auth', 'apikey', 'api_key', 'private', 'cert'
+        }
+        
+        return any(pattern in lower_filename for pattern in sensitive_patterns)
 
     def is_code_file(self, file_path: str) -> bool:
         """Determine if a file should be included in documentation."""
         filename = os.path.basename(file_path)
         
-        if filename in self.exclude_files:
+        # Primero verificamos si es un archivo sensible
+        if self.is_sensitive_file(file_path):
+            self.skipped_files[file_path] = "sensitive file - excluded for security"
             return False
-            
+        
+        # Check if file is in important configs (should always be included)
+        if filename in IMPORTANT_CONFIG_FILES:
+            return True
+        
+        # Check if file should be excluded
+        if filename in DEFAULT_EXCLUDE_FILES:
+            self.skipped_files[file_path] = "excluded lock file or similar"
+            return False
+                
+        if filename in self.exclude_files:
+            self.skipped_files[file_path] = "in exclude list"
+            return False
+                
         if not self.is_text_file(file_path):
             self.skipped_files[file_path] = "binary file"
             return False
 
+        # Line count check
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 line_count = sum(1 for _ in f)
                 if line_count < MIN_LINES_PER_FILE:
                     self.skipped_files[file_path] = f"too few lines ({line_count})"
                     return False
-        except Exception:
+        except Exception as e:
+            self.skipped_files[file_path] = f"error reading file: {str(e)}"
             return False
         
+        # Verify file name and extension
         if filename.lower() in NO_EXT_CODE_FILES:
             return True
         
@@ -252,25 +315,36 @@ class ProjectAnalyzer:
         return "\n".join(report)
     
     def save_report(self, output_path: Optional[str] = None) -> str:
-        """Save report to file.
+        """
+        Save report to specified path or default output directory.
         
         Args:
             output_path: Optional custom path for the report
-                
+                    
         Returns:
             str: Path where the report was saved
         """
         # Generate default filename based on project name and timestamp
         root_name = os.path.basename(self.root_path.rstrip(os.sep))
-        filename = f"project_docs_{root_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"project_docs_{root_name}_{timestamp}.md"
         
-        # If no output path specified, save in project root
-        if not output_path:
-            output_path = os.path.join(self.root_path, filename)
-            
+        if output_path:
+            # Si se proporciona una ruta personalizada, la usamos directamente
+            final_path = output_path
+        else:
+            # Crear directorio de salida en el directorio actual si no existe
+            os.makedirs(OUTPUT_DIR, exist_ok=True)
+            final_path = os.path.join(OUTPUT_DIR, filename)
+        
         # Generate report and save
         report = self.generate_report()
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(report)
-            
-        return output_path
+        try:
+            with open(final_path, 'w', encoding='utf-8') as f:
+                f.write(report)
+            print(f"\nReport saved successfully to: {final_path}")
+        except Exception as e:
+            print(f"Error saving report: {str(e)}")
+            raise
+                
+        return final_path

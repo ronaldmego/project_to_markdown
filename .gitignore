@@ -1,4 +1,4 @@
-# Secrets and Environment
+# Virtual Environment
 .env
 .env/
 .venv/
@@ -23,11 +23,29 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# LaTeX
+# Python Testing
+.tox/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db  # Windows thumbnail cache
+
+# Documentation and Build artifacts
 *.aux
 *.log
 *.out
@@ -36,21 +54,30 @@ wheels/
 *.fdb_latexmk
 *.pdf
 
-# IDE and Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-.DS_Store
-
-# Docker
-*.tar
-*.tar.gz
-Dockerfile
-
 # Project specific
 inspiration.md
 cv_template.tex
 index_template.md
 cv.tex
 ref/
+
+# Docker
+*.tar
+*.tar.gz
+Dockerfile
+
+# Project output directory
+project_to_markdown_output/
+
+# IPython
+.ipynb_checkpoints
+
+# Distribution / packaging
+.Python
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+*.egg-info/
