@@ -1,22 +1,16 @@
-# Secrets
+# Secrets and Environment
 .env
+.env/
+.venv/
+venv/
+env/
+.Python
 
-# LaTeX temporary files
-*.aux
-*.log
-*.out
-*.synctex.gz
-*.fls
-*.fdb_latexmk
-*.pdf
-
-# Python temporary files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
 build/
 develop-eggs/
 dist/
@@ -33,23 +27,30 @@ wheels/
 .installed.cfg
 *.egg
 
-# Docker files
-*.tar
-*.tar.gz
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.pdf
 
-# IDE specific files
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 .DS_Store
 
+# Docker
+*.tar
+*.tar.gz
+Dockerfile
+
 # Project specific
 inspiration.md
 cv_template.tex
 index_template.md
 cv.tex
-Dockerfile
-
-#Ignore Folder
 ref/

@@ -15,7 +15,7 @@ MAX_DEPTH = 10
 # Default directories to exclude
 DEFAULT_EXCLUDE_DIRS = {
     '.git', '__pycache__', 'node_modules', 'venv', '.venv',
-    'env', '.env', '.idea', '.vscode', 'dist', 'build',
+    'env', '.env', 'renv', '.idea', '.vscode', 'dist', 'build',
     'coverage', 'tmp', '.next', '.nuxt', '.pytest_cache',
     '.mypy_cache', '.ruff_cache', '.hypothesis',
     '.next', '.nuxt', '_site', '.jekyll-cache'

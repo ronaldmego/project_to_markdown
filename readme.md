@@ -1,3 +1,32 @@
+# reusable version:
+
+```bash
+project_to_markdown/
+├── src/
+│   └── project_to_markdown/
+│       ├── __init__.py
+│       ├── analyzer.py        # Tu clase ProjectAnalyzer
+│       ├── cli.py            # Interfaz de línea de comandos
+│       └── constants.py      # Constantes y configuraciones
+├── tests/                    # Tests unitarios (opcional por ahora)
+├── LICENSE
+├── README.md
+├── pyproject.toml           # Configuración moderna de Python
+├── requirements.txt
+└── setup.py                 # Para compatibilidad con pip
+```
+## Setup
+
+Instalar asi:
+```bash
+python.exe -m pip install -e C:\Users\ronal\APPs\project_to_markdown
+```
+como metodo avanzado, precisar el python a usar:
+```bash
+where.exe python
+C:\Users\ronal\AppData\Local\Programs\Python\Python312\python.exe -m pip install -e C:\Users\ronal\APPs\project_to_markdown
+```
+
 # Project Documentation Generator for LLMs
 
 Generate consolidated documentation of your local projects for Large Language Models analysis, debugging, and improvement suggestions.
@@ -80,7 +109,7 @@ python project_to_markdown.py "/home/username/my-project" --exclude-dirs temp ca
 ### Current use case:
 ```bash
 python project_to_markdown.py "C:\Users\ronal\APPs\telco_analytics" --exclude-dirs ref logs
-python project_to_markdown.py "D:\APPs\agent-sql-khipu_ai" --exclude-dirs ref logs
+python project_to_markdown.py "C:\Users\ronal\APPs\spotify-dashboard" --exclude-dirs ref logs
 ```
 
 ## Notes
