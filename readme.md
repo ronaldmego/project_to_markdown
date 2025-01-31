@@ -80,7 +80,7 @@ python project_to_markdown.py "/home/username/my-project" --exclude-dirs temp ca
 ### Current use case:
 ```bash
 python project_to_markdown.py "C:\Users\ronal\APPs\telco_analytics" --exclude-dirs ref logs
-python project_to_markdown.py "C:\Users\ronal\APPs\work\chat-bedrock\BedrockChatInterface" --exclude-dirs ref logs
+python project_to_markdown.py "D:\APPs\agent-sql-khipu_ai" --exclude-dirs ref logs
 ```
 
 ## Notes
